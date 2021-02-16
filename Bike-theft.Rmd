@@ -1,0 +1,101 @@
+---
+title: "Bike theft draft"
+output:
+  pdf_document: default
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+urlcolor: blue
+header-includes:    
+  - \usepackage{lastpage}
+  - \usepackage{fancyhdr}
+  - \DeclareUnicodeCharacter{2212}{-}
+  - \pagestyle{fancy}
+  - \fancyhead[CO, CE]{Yu-Chun Chien,Tianxiao Ma}
+  - \fancyfoot[CO, CE]{\thepage \ of \pageref{LastPage}}
+---
+
+```{r setup, message = FALSE, echo=FALSE,warning=FALSE}
+# These are the packages needed
+packages_needed <- c("tidyverse", "googledrive", "readxl", "janitor", 
+                     "lubridate", "opendatatoronto", "ggthemes","dplyr")
+
+package.check <- lapply(
+  packages_needed,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+    }
+  }
+)
+# Credit: package.check based on a helpful post from Vikram Baliga https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/
+
+# Load tidyverse
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(opendatatoronto)
+library(ggthemes)
+library(dplyr)
+# Set so that long lines in R will be wrapped:
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), echo = FALSE)
+```
+
+```{r getdata, warning=FALSE,echo=FALSE,message = FALSE}
+metadata <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/Bicycle_Thefts_Metadata.csv")
+bicycle <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/bicycle-thefts-2014-2019.csv")
+# Get shape data for mapping 
+nbhoods_shape_raw <- readRDS("C:/Users/jeffj/Desktop/STA313/Bike Theft/neighbourhood_shapefile.Rds") %>% 
+  sf::st_as_sf() 
+```
+```{r,warning=FALSE,echo=FALSE,message=FALSE}
+# Change the name for future left join
+names(nbhoods_shape_raw)[names(nbhoods_shape_raw) == "AREA_NAME"] <- 
+  "Neighbourhood"
+nbhoods_both = left_join(nbhoods_shape_raw,bicycle,by=c("Neighbourhood"))
+
+# Count Cases in each neighbourhoods 
+mapping_case <- nbhoods_both %>% 
+  group_by(Neighbourhood) %>%
+  summarise(case_number = n())
+
+# The dividing line of each level
+cases_num_first <- quantile(mapping_case$case_number, 0.25)
+cases_num_median <- median(mapping_case$case_number)
+cases_num_third <- quantile(mapping_case$case_number, 0.75)
+cases_num_dangerous <- 1000
+
+# Instead of using raw numbers, give them levels based on quantiles
+mapping_case_range <- mapping_case %>%
+  mutate(case_range = case_when(case_number >= cases_num_dangerous ~ "Very High (> 1000 cases)",
+                          case_number >=cases_num_third & case_number<cases_num_dangerous ~ 
+                            "High(128 - 1000 cases)",
+                          case_number<cases_num_third & case_number>=cases_num_median ~ 
+                            "Medium(61 - 127 cases)",
+                          case_number<cases_num_median & case_number>=cases_num_first ~ 
+                            "Low(26 - 60 cases)",
+                          case_number<cases_num_first ~ 
+                            "Very Low(<26 cases)",
+                          TRUE ~ "none"))
+
+# Make sure the legend appears aranging from high to low level.
+mapping_case_range$case_range = factor(mapping_case_range$case_range, 
+                                       levels=c("Very High (> 1000 cases)","High(128 - 1000 cases)",
+                                                "Medium(61 - 127 cases)","Low(26 - 60 cases)","Very Low(<26 cases)"),
+                                       labels=c("Very High (> 1000 cases)","High(128 - 1000 cases)",
+                                                "Medium(61 - 127 cases)","Low(26 - 60 cases)","Very Low(<26 cases)"))
+```
+
+# Map bicycle theft cases from 2014-2019 distribution in Toronto
+```{r,fig.height=6,echo=FALSE, warning=FALSE}
+# Map bicycle theft levels in each neighbourhood
+ggplot(data = mapping_case_range) + geom_sf(aes(fill=case_range))+
+  theme_map()+
+  scale_fill_manual(name="Risk level of bicycle theft",
+                    values = c("#DC1C13","#EA4C46","#F07470","#F1959B","#F6BDC0"))+
+  theme(legend.position = "right") +
+  labs(title = "Risk level of bicycle theft considering 2014-2019 cases in Toronto, Canada",
+       subtitle = "Neighbourhoods of Toronto, Canada",
+       caption = str_c("Source: Toronto Police Service Public Safety Data Portal"))
+```
+
+The closer to downtown, the higher risk of bicycle lost... 
