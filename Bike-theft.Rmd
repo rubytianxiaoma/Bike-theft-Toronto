@@ -1,5 +1,7 @@
 ---
-title: "Bike theft draft"
+title: "Be aware of bicycle thefts..."
+author: "Yu-Chun Chien, Tianxiao Ma"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   pdf_document: default
   bookdown::pdf_document2:
@@ -10,7 +12,7 @@ header-includes:
   - \usepackage{fancyhdr}
   - \DeclareUnicodeCharacter{2212}{-}
   - \pagestyle{fancy}
-  - \fancyhead[CO, CE]{Yu-Chun Chien,Tianxiao Ma}
+  - \fancyhead[CO, CE]{Yu-Chun Chien, Tianxiao Ma}
   - \fancyfoot[CO, CE]{\thepage \ of \pageref{LastPage}}
 ---
 
