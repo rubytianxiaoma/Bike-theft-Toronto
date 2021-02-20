@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.2.15)  16 FEB 2021 00:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.2.15)  17 FEB 2021 23:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -348,7 +348,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip52
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 46.
+Package hyperref Info: Option `colorlinks' set `true' on input line 47.
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/geometry/geometry.
 sty
@@ -417,11 +417,11 @@ rs
    defining Unicode char U+2212 (decimal 8722)
 
 Package fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 70.
+less on input line 71.
 
 
 Package fancyhdr Warning: \fancyfoot's `E' option without twoside option is use
-less on input line 71.
+less on input line 72.
 
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backen
@@ -432,24 +432,24 @@ File: l3backend-pdftex.def 2021-02-06 L3 backend support: PDF output (pdfTeX)
 ) (./Bike-theft.aux)
 \openout1 = `Bike-theft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epsto
 pdf-base.sty
@@ -462,7 +462,7 @@ df-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 77.
+Package hyperref Info: Link coloring ON on input line 78.
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.s
 ty
@@ -478,9 +478,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count277
 )
-LaTeX Info: Redefining \ref on input line 77.
-LaTeX Info: Redefining \pageref on input line 77.
-LaTeX Info: Redefining \nameref on input line 77.
+LaTeX Info: Redefining \ref on input line 78.
+LaTeX Info: Redefining \pageref on input line 78.
+LaTeX Info: Redefining \nameref on input line 78.
 (./Bike-theft.out) (./Bike-theft.out)
 \@outlinefile=\write3
 \openout3 = `Bike-theft.out'.
@@ -521,39 +521,39 @@ LaTeX Info: Redefining \nameref on input line 77.
 
 Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             https://www.ctan.org/pkg/pageslts
-(lastpage)             ! on input line 77.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 7
-9.
+(lastpage)             ! on input line 78.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 8
+0.
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 7
-9.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 8
+0.
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-79.
+80.
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-79.
+80.
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 79.
+(Font)              <12> on input line 80.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 79.
+(Font)              <8> on input line 80.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 79.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 79.
+(Font)              <6> on input line 80.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 80.
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 79.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 80.
 
 (c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -564,7 +564,7 @@ File: Bike-theft_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (type pd
 f)
 <use Bike-theft_files/figure-latex/unnamed-chunk-2-1.pdf>
 Package pdftex.def Info: Bike-theft_files/figure-latex/unnamed-chunk-2-1.pdf  u
-sed on input line 84.
+sed on input line 85.
 (pdftex.def)             Requested size: 469.75386pt x 433.61894pt.
 
 AED: lastpage setting LastPage
@@ -579,20 +579,21 @@ Package rerunfilecheck Info: File `Bike-theft.out' has not changed.
 Here is how much of TeX's memory you used:
  10145 strings out of 481250
  149391 string characters out of 5914108
- 452534 words of memory out of 5000000
+ 452848 words of memory out of 5000000
  26906 multiletter control sequences out of 15000+600000
  430691 words of font info for 48 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,5n,74p,424b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,6n,74p,424b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.e
 nc}<c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmb
 x12.pfb><c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/l
 m/lmr10.pfb><c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/publ
-ic/lm/lmr17.pfb>
-Output written on Bike-theft.pdf (1 page, 281083 bytes).
+ic/lm/lmr12.pfb><c:/Users/jeffj/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/
+public/lm/lmr17.pfb>
+Output written on Bike-theft.pdf (1 page, 305443 bytes).
 PDF statistics:
- 38 PDF objects out of 1000 (max. 8388607)
- 29 compressed objects within 1 object stream
+ 42 PDF objects out of 1000 (max. 8388607)
+ 32 compressed objects within 1 object stream
  4 named destinations out of 1000 (max. 500000)
  14 words of extra memory for PDF output out of 10000 (max. 10000000)
 

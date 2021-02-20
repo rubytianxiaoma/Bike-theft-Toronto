@@ -19,7 +19,7 @@ header-includes:
 ```{r setup, message = FALSE, echo=FALSE,warning=FALSE}
 # These are the packages needed
 packages_needed <- c("tidyverse", "googledrive", "readxl", "janitor", 
-                     "lubridate", "opendatatoronto", "ggthemes","dplyr")
+                     "lubridate", "opendatatoronto", "ggthemes","dplyr","gganimate")
 
 package.check <- lapply(
   packages_needed,
@@ -38,17 +38,24 @@ library(janitor)
 library(opendatatoronto)
 library(ggthemes)
 library(dplyr)
+library(gganimate)
 # Set so that long lines in R will be wrapped:
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), echo = FALSE)
 ```
 
 ```{r getdata, warning=FALSE,echo=FALSE,message = FALSE}
+# Get the dataset we need for this project.
 metadata <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/Bicycle_Thefts_Metadata.csv")
 bicycle <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/bicycle-thefts-2014-2019.csv")
 # Get shape data for mapping 
 nbhoods_shape_raw <- readRDS("C:/Users/jeffj/Desktop/STA313/Bike Theft/neighbourhood_shapefile.Rds") %>% 
   sf::st_as_sf() 
+
+nbhoods_theft <- readRDS("C:/Users/jeffj/Desktop/STA313/Bike Theft/neighbourhood_shapefile.Rds") %>% 
+  sf::st_as_sf() 
+
 ```
+
 ```{r,warning=FALSE,echo=FALSE,message=FALSE}
 # Change the name for future left join
 names(nbhoods_shape_raw)[names(nbhoods_shape_raw) == "AREA_NAME"] <- 
@@ -101,3 +108,62 @@ ggplot(data = mapping_case_range) + geom_sf(aes(fill=case_range))+
 ```
 
 The closer to downtown, the higher risk of bicycle lost... 
+
+## Bike Color
+
+```{r,fig.height=5,echo=FALSE,warning=FALSE}
+# Code for plotting bike color bar plot
+bikecolor_nona <- bicycle %>% 
+  filter(!is.na(Bike_Colour))
+bikecolor_nona$Bike_Colour = substr(bikecolor_nona$Bike_Colour,start = 1, stop = 3)
+bikecolor_nona$Bike_Colour = str_replace_all(string=bikecolor_nona$Bike_Colour,c("WHI" = "white", "WHT" = "white", "BLA" = "black", "BLK"= "black",
+                                                                           "BLU"="blue","BRN"="brown","GLD"="yellow","GRE"="green","GRN"="green",
+                                                                           "GRY"="grey","ONG"="yellow","PNK"="red","RED"="red","SIL"="grey","YEL"="yellow", "BGE"="yellow","DBL"="black","DGR"="green","TAN"="brown","TRQ"="green","OTH"="other","PLE"="purple","BRZ"="other","BUR"="red","CPR"="red","CRM"="white",
+                                                                           "LGR"="grey","MRN"="other","MUL"="other","LBL"="blue"))
+
+color_count <- bikecolor_nona %>% 
+  group_by(Bike_Colour) %>%
+  summarise(case_number = n())%>%
+   filter(case_number != 1)
+
+ggplot(data=color_count,aes(x = reorder(Bike_Colour,-case_number), y = case_number,fill=Bike_Colour)) +
+  geom_bar(stat = "identity",color="grey2") +
+  geom_text(aes(label=case_number), size = 3,vjust=-0.75)+
+  theme_minimal() + 
+  scale_fill_manual(values = c("grey2","deepskyblue3","tan3","forestgreen","#AAAAAA","red","plum4","firebrick","floralwhite","darkgoldenrod1"))+
+  labs(title = "Which color of bicycle is more likely to be stolen",
+       subtitle = "Confirmed cases from 2014-2019 in Toronto",
+       x = "Bike Color",
+       y = "Lost case Count",
+       caption = str_c("Source: Toronto Police Service Public Safety Data Portal"))
+```
+
+## Bicycle Type
+```{r}
+biketype_nona <- bicycle %>% 
+  filter(!is.na(Bike_Type))
+type_count <- biketype_nona %>% 
+  group_by(Bike_Type) %>%
+  summarise(type_number = n())
+type_count$Bike_Type = str_replace_all(string=type_count$Bike_Type,c("BM"="BMX","EL"="Electric","FO"="Folding","MT"="Mountain","OT"="Other",
+                                                                     "RC"="Racer","RE"="Recumbant","RG"="Regular","SC"="Scooter","TA"="Tandem",
+                                                                     "TO"="Touring","TR"="Tricycle","UN"="Unicycle","UNKNOWN"="Type Unknown"))
+theme_set(theme_classic())
+
+# Plot
+ggplot(type_count, aes(x=reorder(Bike_Type,-type_number), y=type_number)) + 
+  geom_point(size=3) +   # Draw points
+  geom_segment(aes(x=Bike_Type, 
+                   xend=Bike_Type, 
+                   y=0, 
+                   yend=type_number))+
+                 labs(title="What types of bicycle is popular among bike thefts", 
+                      subtitle="Empirical evidence collected from 2014-2019 in Toronto", 
+                      x = "Bike Type",
+                      y = "Lost case Count",
+                      caption="Source: Toronto Police Service Public Safety Data Portal")+ 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+
+```
+
+## Month
