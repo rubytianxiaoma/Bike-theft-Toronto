@@ -51,10 +51,11 @@ bicycle <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/bicycle-thefts-201
 nbhoods_shape_raw <- readRDS("C:/Users/jeffj/Desktop/STA313/Bike Theft/neighbourhood_shapefile.Rds") %>% 
   sf::st_as_sf() 
 
-nbhoods_theft <- readRDS("C:/Users/jeffj/Desktop/STA313/Bike Theft/neighbourhood_shapefile.Rds") %>% 
-  sf::st_as_sf() 
-
 ```
+
+Code last run `r Sys.Date()`.  
+Daily: `r date_daily[1,1]`.   
+Neighbourhood: `r date_nbhood[1,1]`. 
 
 ```{r,warning=FALSE,echo=FALSE,message=FALSE}
 # Change the name for future left join
@@ -139,7 +140,7 @@ ggplot(data=color_count,aes(x = reorder(Bike_Colour,-case_number), y = case_numb
 ```
 
 ## Bicycle Type
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 biketype_nona <- bicycle %>% 
   filter(!is.na(Bike_Type))
 type_count <- biketype_nona %>% 
@@ -167,3 +168,48 @@ ggplot(type_count, aes(x=reorder(Bike_Type,-type_number), y=type_number)) +
 ```
 
 ## Month
+```{r,fig.height=5,echo=FALSE,warning=FALSE}
+# install.packages("ggpmisc")
+library("ggpmisc")
+# Change the date format
+bicycle$Occurrence_Date= date(bicycle$Occurrence_Date)
+# Make data tidy
+time_data <- bicycle %>%
+  group_by(Occurrence_Date) %>%
+  summarise(lost_number = n())
+time_data %>%
+  ggplot(aes(x = Occurrence_Date, y = lost_number)) +
+  geom_line() +stat_peaks(span=24, ignore_threshold = 0.75, color="red") +
+  stat_peaks(geom="text", span=24, ignore_threshold = 0.75, x.label.fmt = "%b %Y", color="red", angle=0, hjust=-0.1,vjust = 1) +
+  theme_minimal() +
+  labs(title = "Cases reported by day in Toronto, Canada",
+       subtitle = "With high bicycle stolen rate in red",
+       x = "Date",
+       y = "Case count",
+       caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + scale_x_date(date_labels = "%b %Y", date_breaks = "1 year")+theme(plot.title  = element_text(hjust = 0.5),
+            axis.line   = element_line(color = 'black'),
+            axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+```
+## Bicycle Make
+```{r,fig.height=5,echo=FALSE,warning=FALSE}
+bikemake_nona <- bicycle %>%
+  filter(!is.na(Bike_Make))
+make_count <- bikemake_nona %>%
+  group_by(Bike_Make)%>%
+  summarise(case_number=n())%>%
+  arrange(desc(case_number))%>%
+  slice(1:10)
+
+ggplot(data=make_count,aes(x = reorder(Bike_Make,case_number), y = case_number,fill=case_number)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label=case_number), size = 3,vjust=-0.75)+
+  scale_fill_gradient(low="lightsalmon", high="indianred")+
+  theme_minimal() +
+  labs(title = "Which make of bicycle is more likely to be stolen",
+       subtitle = "Confirmed cases from 2014-2019 in Toronto",
+       x = "Bike make",
+       y = "Lost case Count",
+       caption = str_c("Source: Toronto Police Service Public Safety Data Portal"))+theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
