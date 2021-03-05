@@ -3,22 +3,23 @@ title: 'Toronto Bike Thieves in Action: What Is Their Favorite Bicycle?'
 author: "Yu-Chun Chien, Tianxiao Ma"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document:
-    df_print: paged
+  pdf_document: default
   bookdown::pdf_document2:
     latex_engine: xelatex
-  pdf_document: default
+  html_document:
+    df_print: paged
 urlcolor: blue
 header-includes:
 - \usepackage{lastpage}
 - \usepackage{fancyhdr}
 - \DeclareUnicodeCharacter{2212}{-}
+- \setlength\parindent{24pt}
 ---
 
 ```{r setup, message = FALSE, echo=FALSE,warning=FALSE}
 # These are the packages needed
 packages_needed <- c("tidyverse", "googledrive", "readxl", "janitor", 
-                     "lubridate", "opendatatoronto", "ggthemes","dplyr","ggpmisc")
+                     "lubridate", "opendatatoronto", "ggthemes","dplyr","ggpmisc","ggplot2","forcats","ggridges","RColorBrewer")
 
 package.check <- lapply(
   packages_needed,
@@ -37,7 +38,11 @@ library(janitor)
 library(opendatatoronto)
 library(ggthemes)
 library(dplyr)
-library(gganimate)
+library(ggplot2)
+library(forcats)
+library(ggridges)
+library(RColorBrewer)
+
 # Set so that long lines in R will be wrapped:
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), echo = FALSE)
 ```
@@ -93,7 +98,10 @@ mapping_case_range$case_range = factor(mapping_case_range$case_range,
 
 # What happened to bikes in Toronto from 2014 to 2019? 
 
-  Bike theft remains an endemic issue in Toronto. It’s fairly common to see a lonely bicycle wheel/frame locked by a soft lock on the sidewalk railing on the side of the road in Toronto. Then those lost bike parts were listed on second-hand trading websites, free markets, and even black markets by the thieves. Regardless of the appearance of the bicycle, the parking space, and the time, there is a chance that yours will be stolen. The decision to steal a bicycle is all in the hands of the thieves, the cyclists have no other choice than to accept the cruel fact. In this article, we will explore factors that impact the risk of bicycle theft in Toronto from multifaceted perspectives including geography, time, and bicycle characteristics. The analysis is based on data adapted from the Toronto Police Service Public Safety Data Portal. The original dataset contains 21,584 recorded bike thefts that took place in the City of Toronto from 2014 to 2019 with corresponding information. Hopefully Toronto cyclists and potential bike buyers can refer to this article as a risk assessment reference.
+|       Bike theft is an endemic issue in Toronto. People are not surprised to see a lonely bicycle wheel/frame locked by a soft lock on the sidewalk railing in Toronto. There were some high-viewed videos showing daylight bike thefts in Toronto in the past years*(Talia Ricci, 2019; Lisa Xing, 2018)*. Thousands of victims of bicycle thefts emerge every year without any indication of a downward trend. Their stolen bike parts were listed on second-hand trading websites, free markets, and even black markets by the thieves. Regardless of the appearance of the bicycle, the parking space, and the time, there is a chance that a bike will be stolen. The decision to steal a bike is all in the hands of the thieves, the cyclists have no other choice than to accept the cruel fact. 
+
+In this article, we will explore factors that impact the risk of bicycle theft in Toronto from multifaceted perspectives including the geography, time, and a number of bicycle characteristics. The analysis is based on data adapted from the Toronto Police Service Public Safety Data Portal. The original dataset contains 21,584 recorded bike thefts that took place in the City of Toronto from 2014 to 2019 with corresponding information. By providing analysis in several facets, we hope that Toronto cyclists and potential bike buyers can refer to this article as a risk assessment reference.
+
 
 # 1. Geography: Which part of Toronto did thieves visit the most?
 ```{r,echo=FALSE, warning=FALSE,message=FALSE}
@@ -109,13 +117,13 @@ theft_levels <- ggplot(data = mapping_case_range) + geom_sf(aes(fill=case_range)
 theft_levels
 ```
 
-  The thematic map above portrays the risk level of bike theft in each neighborhood from 2014 to 2019 in the city of Toronto, according to the data issued by Toronto Police. Considering the amount of bike thefts, we setted 5 quintiles to represent five levels of risk. **Bike thefts can occur everywhere, but the situation gets worse as it goes closer to the downtown area.** Obviously, downtown has a significantly higher number of cases than any other place. From 2014 to 2019, the **neighborhood with highest-risk of bike thefts is Waterfront Communities -The Island** with 2271 cases, the neighborhood had 454.2 times more cases than the **Maple Leaf neighborhood**, which is the **safest neighborhood** for bike thefts with only 5 cases.
+|   The thematic map above portrays the risk level of bike theft in each neighborhood from 2014 to 2019 in the city of Toronto, according to the data issued by Toronto Police. Considering the amount of bike thefts, we setted 5 quintiles to represent five levels of risk. **Bike thefts can occur everywhere, but the situation gets worse as it goes closer to the downtown area;** downtown has a significantly higher number of cases than any other place. From 2014 to 2019, the **neighborhood with highest-risk of bike thefts is** ***Waterfront Communities - The Island*** with 2271 cases, the neighborhood had 454.2 times more cases than the ***Maple Leaf neighborhood***, which is the **safest neighborhood** for bike thefts with only 5 cases.
 
-  There are several high-risk theft neighborhoods near the border of city of Toronto as well. If we look at the neighborhoods around York university, Seneca college and Centennial College, we’ll notice a higher amount of cases than other nearby neighborhoods. Taking the demographic characteristics into account, in fact, the most densely built up universities and colleges area is downtown. Instead of solely taking geographic perspective into bike stolen patterns and say thieves often commit crimes in downtown Toronto, it would be more accurate to describe the pattern by joining the demographic characteristics. **Thieves love visiting neighborhoods with a high proportion of students.**
+|   There are several high-risk theft neighborhoods near the border of city of Toronto as well. If we look at the neighborhoods around York university, Seneca college and Centennial College, we’ll notice a higher amount of thefts than other nearby neighborhoods. Further, taking the demographic characteristics into account, in fact, the most densely built up universities and colleges area is in downtown. Thus, this pattern indicates that instead of solely taking geographic perspective into bike stolen patterns and say thieves commit more crimes in downtown Toronto, it would be more accurate to describe the pattern by combining the demographic characteristics, that is, **thieves love visiting neighborhoods with a high proportion of students.**
 
-  Why did the Northern neighborhoods look safer? Well, it’s about transportation planning. Public transportation in the City of Toronto gets inconvenient as it moves further away from downtown. The distribution of financial buildings in the north is much scattered. People living in the northern areas naturally tend to drive instead of riding bicycles for long-distance travel. As a result, it’s quite hard to see bicycles in those areas. However, students cycle around the campus to ensure an efficient transfer between educational buildings. This is why thieves keep their eyes on the group of students. 
+|   Why did the Northern neighborhoods look safer? Well, it’s about transportation planning. Public transportation in the City of Toronto gets inconvenient as it moves further away from downtown. The distribution of financial and office buildings in the north is much scattered. Also, households in the Northern areas usually consist of a family with more than 2 people. These individuals naturally tend to drive instead of riding bicycles to go to work and grocery shopping. As a result, there are fewer bicycles in those areas. Conversely, a great number of students live near school on their own / share rooms with peers. The students have a higher demand for bikes to cycle around the campus to ensure an efficient transfer between educational buildings. This is probably why thieves keep their eyes on students.
 
-  We’ve seen the crazy amount of bike thefts, but how many of the cyclists were able to find their bicycles back? Among 21,584 bike thefts, how many cases were actually recovered? 
+|   We’ve seen the crazy amount of bike thefts, but how many of the cyclists were able to find their bicycles back? Among 21,584 bike thefts, how many cases were actually recovered? 
 
 ## 1.2 How many bike thefts are recovered?
 
@@ -134,7 +142,7 @@ recover_map
 
 Once a bike is stolen, it’s incredibly hard to trace it back. In the past six years, **only 1.17% bike thefts were recovered**. In the graph above, each blue point represents a single recovered case. We can observe that recovered cases clustered in downtown then scattered around. However, considering the staggering total number of bike thefts in areas with high bike thefts, only a few more recovered cases can’t help with the cruel truth that there were only **252 recovered cases among 21,584 bike thefts.** 
 
-What matters is the **cost of bike thefts** is **incredibly low**. Thieves don’t pay much for bike thefts because of the **low probability of being caught.** While a stolen bike might not be worth much, police have to severely punish thieves as a warning to other potential criminals. Otherwise, when thieves realize that they can barely be caught after stealing, they could plan their next crime soon and eventually cause greater trouble to society.
+What matters is that the **cost of bike thefts** is **incredibly low**. Thieves don’t pay much for bike thefts because of the **low probability of being caught.** While a stolen bike might not be worth much, police have to severely punish thieves as a warning to other potential criminals. Otherwise, when thieves realize that they can barely be caught after stealing, they could plan their next crime soon and eventually cause greater trouble to society.
 
 Considering thieves prefer to commit thefts around universities and colleges, will theft be more active during the school season? Students usually park their bicycles outside teaching buildings, how does the parking places impact the risk of being stolen? Where should cyclists park then?
 
@@ -156,21 +164,111 @@ time_data %>%
   theme_minimal() +
   labs(title = "Bike theft Cases reported in Toronto, Canada",
        subtitle = "Months with high report rate in Red Marks",
-       x = "Date",
+       x = "Time",
        y = "Case count",
        caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + scale_x_date(date_labels = "%b %Y", date_breaks = "1 year")+theme(plot.title  = element_text(hjust = 0.5),
             axis.line   = element_line(color = 'black'),
             axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-In fact, the graph above demonstrates that although thieves prefer places close to colleges and universities, bike theft does **not happen the most during the school season**, which is typically from September to April. In this time-series plot, we see the repeated pattern of bike thefts every year from 2014 to 2019. This might be related to the **weather constraints** of Toronto. 
+In fact, the graph above demonstrates that although thieves prefer places close to colleges and universities, bike thefts do **not happen the most during the school season**, which is typically from September to April. In this time-series plot, we see the repeated pattern of bike thefts every year from 2014 to 2019. This might be related to the **weather constraints** of Toronto. 
 
-Essentially, thieves have their **“hibernation” during the winter months**, then they become **active during summer (June to September).** The continental climate of Toronto makes long freezing winters and frequently ice-covered ground, which makes cyclists’ life much harder during winter. Road conditions basically determine whether cyclists are capable of cycling that day. Generally, winter weather in Toronto can start as early as October and last through April. According to historical data issued by the weather network, Toronto residents can even experience snowy days in June. Conversely, people don’t get cold wind-whipped snow against their faces in the summertime and the road condition is ideal, this results in more people cycling outside in the summer months.
+Essentially, thieves have their **“hibernation” during the winter months**, then they become **active during summer (June to September).** The continental climate of Toronto makes long freezing winters and frequently ice-covered ground, which makes cyclists’ life much harder during winter. Road conditions basically determine whether cyclists are capable of cycling that day. Generally, winter in Toronto can start as early as October and last through April. According to historical data issued by the Weather Network(2021), Toronto residents can even experience snowy days in June. Conversely, people don’t get cold wind-whipped snow against their faces in the summertime and the road conditions are ideal, which enables more people to cycle outside in the summer months and results in more cases of bike thefts.
 
-In most instances, thieves steal to raise money for whatever purposes they have, particularly for drugs and alcohol. Humans are lazy, but thieves bring laziness to the next level -- they don’t want to put effort into exchanging money. A common logic in their minds is “Stealing seems like a good choice, I can earn money with minimal effort.” But how about during crimes? Will thieves be well prepared and even do background research before committing crimes, or they’re lazy to do so? Would they prefer to steal bikes randomly parked outside that can be easily reached, or those locked in a secure underground parking lot?
+In most instances, thieves steal to raise money for whatever purposes they have, particularly for drugs and alcohol*(US Department of Justice, 2008)*. Humans are lazy, but thieves bring laziness to the next level -- they don’t want to put effort into exchanging money. A common logic in their minds is “Stealing seems like a good choice, I can earn money with minimal effort.” But how about during crimes? Will thieves be well prepared and even do background research before committing crimes, or they’re lazy to do so? Would they prefer to steal bikes randomly parked outside that can be easily reached, or those locked in a secure underground parking lot?
 
-# Bicycle Type: Which Type of bicycles were popular among thieves?
+# 3. What's the theft premise type across months? 
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+# monthy count
+transform <- 0
+for(i in 1:21584){
+  if(bicycle$Occurrence_Month[i] == 1){
+    transform[i] <- "Jan"}
+  if(bicycle$Occurrence_Month[i] == 2){
+    transform[i] <- "Feb"}
+  if(bicycle$Occurrence_Month[i] == 3){
+    transform[i] <- "Mar"}
+  if(bicycle$Occurrence_Month[i] == 4){
+    transform[i] <- "Apr"}
+  if(bicycle$Occurrence_Month[i] == 5){
+    transform[i] <- "May"}
+  if(bicycle$Occurrence_Month[i] == 6){
+    transform[i] <- "Jun"}
+  if(bicycle$Occurrence_Month[i] == 7){
+    transform[i] <- "Jul"}
+  if(bicycle$Occurrence_Month[i] == 8){
+    transform[i] <- "Aug"}
+  if(bicycle$Occurrence_Month[i] == 9){
+    transform[i] <- "Sep"}
+  if(bicycle$Occurrence_Month[i] == 10){
+    transform[i] <- "Oct"}
+  if(bicycle$Occurrence_Month[i] == 11){
+    transform[i] <- "Nov"}
+  if(bicycle$Occurrence_Month[i] == 12){
+    transform[i] <- "Dec"}
+}
+bicycle$month <- c(transform)
 
+
+bicycle$month <- factor(bicycle$month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+
+color_1 <- c("#D55E00", "#0072B2","#E69F00", "#009E73", "#CC79A7")
+
+Premise <- ggplot(bicycle, aes(month, fill=Premise_Type)) + geom_bar() + ggtitle("Number of Bicyle Thefts Each Month") + scale_fill_discrete(name="Premise Type") + scale_fill_manual(values = color_1) +
+  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + theme_minimal()
+Premise
+
+```
+
+Looking at the premise type where the bike theft occurred, it is evident that **bikes are more often stolen outside.** This could be linked to the thieves' preference for stealing bikes near campuses, where students often left their bike unlocked outside of the teaching buildings. More generally, be it college campuses, commercial buildings, or apartments, the most accessible bikes that are easy to steal are often those parked outside those types of buildings which are often unlocked.   
+
+**Moreover, thefts occurring in all premise types have changed across months, which is probably reflective of bicycle use.** During late fall, winter, and early spring, people are not able to ride bikes due to the weather, so they keep their bike indoors, often locked and well stored. In contrast, as the weather becomes more ideal for bike rides, people start riding bikes more often. To make it more convenient to access, people would not store the bike and often leave it unlocked outside, in their workplaces, or in their home. This makes thefts more effortless. This pattern could also be observed in the changes in the number of thefts that occurred outside each month, where the cases during summer is significantly more than the cases during winter.
+
+Most thieves are active only for a short period of time. Also, our analysis indicates that thieves would not make too much money out of it. In other words, they did not show a preference over expensive bikes, but instead stole bikes that are not too expensive. So what type of bikes and with what price range were most preferred by thieves in the past 6 years and why?
+
+# 4. Cost of stolen bikes
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+bicycle <- na.omit(bicycle)
+
+ggplot(bicycle, aes(Cost_of_Bike)) + geom_histogram(fill= "darkgoldenrod2", color = "goldenrod")+geom_density(kernel=gaussian) + xlim(0,5000)+ geom_vline(xintercept=mean(bicycle$Cost_of_Bike), linetype="dashed", color="black") +geom_text(aes(x=mean(bicycle$Cost_of_Bike)+400, label="mean = 1057", y=2400), size=3, color="black") + theme_minimal() + labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + ggtitle("Cost of the Stolen Bikes")
+
+```
+
+As mentioned, **to our surprise, most of the bikes that were stolen are not too expensive.** Although the average of the cost of the stolen bikes is 1057 CAD, which is probably influenced by a few outliers, the mode of the price is approximately 500 CAD. The majority of the bike cost lies between 100-1500, with a few outliers with significantly higher cost. 
+
+**This might be due to the owners’ effort of taking care of their bikes.** Since the bikes are not expensive, the owner would not take too much care of the bike and would not invest too much in buying a good lock to ensure safety. When they are not riding the bike, they simply put them outdoors without locking it or with an easily breakable lock. Even in winter, when the use of the bikes are less frequent, the owners might leave the bikes unlocked in their apartments or houses.
+
+From this point of view, bikes that cost around 500 might be most likely to be stolen due to two factors: The bike that costs under 500 might be equally easily accessible when compared to the bike that costs around 500, but the profit earned reselling those bikes are too low that the thieves are not interested in them. As for the bikes that are more expensive than 500, for example over 1500, the owners of the bikes take better care of their bikes which make stealing the bike too hard. Such findings illustrate that, it might not only be the thieves' preference, but also the bikes’ accessibility; 500 appears to be the “sweet spot” for the thieves.   
+
+In fact, bike riders’ carelessness of their bike seemed to be more pervasive than people would like to believe. According to the collected data, approximately ¼ bike theft victims failed to provide accurate information on their bike brands when reporting the crime to police. 
+
+# 5. Do not expect people to take care of bikes When they do not even know the brand of the bike
+```{r,fig.height=5,echo=FALSE,warning=FALSE,message=FALSE}
+bikemake_nona <- bicycle %>%
+  filter(!is.na(Bike_Make))
+bikemake_nona$Bike_Make = str_replace_all(string=bikemake_nona$Bike_Make,c("OT"="OTHER","UK"="Unknown","GI"="GIANT","UNKNOWN MAKE"="Unknown","TR"="TREK","NO"="NORCO","CC"="CCM","SC"="SCHWINN"))
+make_count <- bikemake_nona %>%
+  group_by(Bike_Make)%>%
+  summarise(case_number=n())%>%
+  arrange(desc(case_number))%>%
+  slice(1:10)
+
+
+ggplot(data=make_count,aes(x = reorder(Bike_Make,case_number), y = case_number,fill=case_number)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label=case_number), size = 3,vjust=-0.75)+
+  scale_fill_gradient(low="lightsalmon", high="indianred")+
+  theme_minimal() +
+  labs(title = "Which make of bicycle is more likely to be stolen",
+       subtitle = "Confirmed cases from 2014-2019 in Toronto",
+       x = "Bike make",
+       y = "Lost case Count",
+       caption = str_c("Source: Toronto Police Service Public Safety Data Portal"))+theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+Intuitively, victims’ failure to provide accurate information might be due to the fact that the stolen bike has a less known or inferior brand, does not have a particular brand at all, or these bike theft victims are unacquainted with their bikes. Another possible explanation to the large amount of vague information provided by the victims about bike brands is that these victims who reported to the police station didn’t think their bikes would be found. In this situation, they reported their bicycle brand as “others” and “unknown” to finish the documents promptly. This is a serious warning to police stations. Over years, there is no indication of a decline in bike thefts. As mentioned earlier, the low recovery rate and low-cost theft can help explain the onset of distrust. Police officers should impose heavier penalties on thieves to decrease bike thefts in our neighborhoods. Besides these unknown brands, Giant and Trek were preferred brands by the thieves, which might be because of these brands’ popularity.
+
+# 6. Bicycle Type: Which Type of bicycles were popular among thieves?
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 biketype_nona <- bicycle %>% 
   filter(!is.na(Bike_Type))
@@ -194,18 +292,19 @@ ggplot(type_count, aes(x=reorder(Bike_Type,-type_number), y=type_number)) +
                       x = "Bike Type",
                       y = "Lost case Count",
                       caption="Source: Toronto Police Service Public Safety Data Portal")+ 
-  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) + theme_minimal()
 
 ```
 
 **Mountain and road bikes account for around half of all stolen bicycles in the last 6 years** ("regular" and "other" bicycles in police files are primarily road bikes). Getting back to the distribution of costs, this is one of the major reasons we find that the majority of stolen bicycles cost less than $1,000, because mountain and road bicycles have a relatively cheaper average price compared to race and electric bikes. The crazy amount of targeted types of bike was associated with stealing behaviours.
 
-Thieves love to **steal common items** because people naturally pay more attention to rare goods, especially impressive-looking items. While items that can be seen everywhere will hardly attract people’s attention.Before consumers make buying decisions, they must consider whether the item they intend to buy will suit their needs. **Mountain Bike is the First Choice** than any other types of bike **in Toronto**. City Bikes described the pros and cons of different types of bike in the article “Which is the right bike for you?”. Based on the information provided in the article, mountain bikes are designed for dirty and rough paths. They are equipped with transitional equipment for adjusting physical strength and speed, the tire tread is very deep, so cyclists can ride on non-tarmac roads. With a large demand for mountain bikes and a large base number of this type of bike, it’s **easier for thieves to supply mountain bikes and sell faster afterwards**.
+Thieves love to **steal common items** because people naturally pay more attention to rare goods, especially impressive-looking items. While items that can be seen everywhere will hardly attract people’s attention.Before consumers make buying decisions, they must consider whether the item they intend to buy will suit their needs. **Mountain Bike is the First Choice** than any other types of bike in Toronto. City Bikes described the pros and cons of different types of bike in the article “Which is the right bike for you?”. Based on the information provided in the article, mountain bikes are designed for dirty and rough paths. They are equipped with transitional equipment for adjusting physical strength and speed, the tire tread is very deep, so cyclists can ride on non-tarmac roads. **With a large demand for mountain bikes and a large base number of this type of bike, it’s easier for thieves to supply mountain bikes and sell faster afterwards**.
 
 Most thieves steal to raise money and acquire something else,usually drugs and alcohol. They require something that is easy to steal and can be cashed as quickly as possible. The best choice among bikes is those **expensive light-weight bikes** such as **race bikes, scooters, and folding bikes.** If the thieves are not in a rush, they may keep their eyes on those expensive ones such as electric bikes and wait for a buyer. Students, which is the “favorite” group by bike thieves, generally prefer light-weight bikes with an appealing appearance. Their bikes are ideal for **easy stealing and fast selling.** That’s why those light-weighted and relatively expensive types of bike such as road, race, touring, electric, scooter and folding bikes were also popular among bike thieves.
+
 In our daily lives, it’s quite common to see bikes with dark colors(black, navy blue etc.). Considering the demand of bikes with respect to colors, do thieves prefer to steal bikes with normal colors or those with eye-catching colors? 
 
-## Bike color: What’s the most common color among stolen bicycles?
+## 7. Bike color: What’s the most common color among stolen bicycles?
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 # Code for plotting bike color bar plot
 bikecolor_nona <- bicycle %>% 
@@ -235,39 +334,90 @@ ggplot(data=color_count,aes(x = reorder(Bike_Colour,-case_number), y = case_numb
 
 The above bar graph demonstrates the top 10 popular colors among stolen bicycles based on the past 6 years’ bike thefts in Toronto, ranked in descending order. Obviously, **black bicycles had a substantial “advantage” in stolen bike markets.**  Black bike theft cases were twice as many as the gray bike thefts, and 40 times more than brown bike thefts. The high amount of black bicycles are stolen not only because it is a favourite among cyclists, but also because it is more practical for thieves to steal during the night. 
 
-Black is the “you won’t go wrong” color, it has high compatibility with other pairs. When people feel unsure about the color that would fit their needs, it's more reasonable to gravitate toward black and white than any other color. Black is never old-fashioned, from children to grandmas, they always have something black in their closet. Moreover, when thinking of a president’s car, the first scene shown in your head is probably a black car and a beast of bodyguards, isn’t it? Black can link to those words like premium, professional and safe. That’s one of the major reasons black bicycles are so popular among consumers. For people without a particular preference towards color, black bicycles are often their first choice. 
+Black is the *“you won’t go wrong”* color, it has high compatibility with other pairs. When people feel unsure about the color that would fit their needs, it's more reasonable to gravitate toward black and white than any other color. Black is never old-fashioned, from children to grandmas, they always have something black in their closet. Moreover, when thinking of a president’s car, the first scene shown in your head is probably a black car and a beast of bodyguards, isn’t it? Black can link to those words like premium, professional and safe. That’s one of the major reasons black bicycles are so popular among consumers. For people without a particular preference towards color, black bicycles are often their first choice. 
 
-On the other hand, black is a representative of night. Black bikes have low visibility during the night, and black can perfectly shade dirty stealing behaviors into surroundings. As mentioned in the last section, from the thieves' perspective, they like things with a high second-sell value and can be converted to cash fastly. The prevalence of black bikes results in high demand in the bicycle market. Similarly, grey, blue and white bikes have a relatively higher demand than those bikes with special color patterns such as Leopard. Nevertheless, black bikes stand out among all color bikes since it has advantages in attracting less attention during night. The **liquidity(cashability)** is a key indicator for thieves to determine which one they should steal.
+In addition, black is a representative of night. Black bikes have low visibility during the night, and black can perfectly shade dirty stealing behaviors into surroundings. As mentioned in the last section, from the thieves' perspective, they like things with a high second-sell value and can be converted to cash fastly. The prevalence of black bikes results in high demand in the bicycle market. Similarly, grey, blue and white bikes have a relatively higher demand than those bikes with special color patterns such as Leopard. Nevertheless, black bikes stand out among all color bikes since it has advantages in attracting less attention during night. The **liquidity(cashability)** is a key indicator for thieves to determine which one they should steal.
 
 With the great quantity of black stolen bikes, nighttime seems the best time to steal. It should be hard to steal during daytime then. Will the data support our hypothesis? What time had the most bike thefts in a day?
 
-# Which bike model was targeted the most by the thefts?
-```{r,fig.height=5,echo=FALSE,warning=FALSE,message=FALSE}
-bikemake_nona <- bicycle %>%
-  filter(!is.na(Bike_Make))
-bikemake_nona$Bike_Make = str_replace_all(string=bikemake_nona$Bike_Make,c("OT"="OTHER","UK"="Unknown","GI"="GIANT","UNKNOWN MAKE"="Unknown","TR"="TREK","NO"="NORCO","CC"="CCM","SC"="SCHWINN"))
-make_count <- bikemake_nona %>%
-  group_by(Bike_Make)%>%
-  summarise(case_number=n())%>%
-  arrange(desc(case_number))%>%
-  slice(1:10)
+# 8. Occurence time 
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+bicycle1 <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/bicycle-thefts-2014-2019.csv")
+transform_time <- 0
+for (i in 1:21584){
+  transform_time[i] <- substr(bicycle1$Occurrence_Time[i], 12, 13)
+}
+bicycle1$time <- as.numeric(transform_time)
 
+day_or_night <- 0
+for(i in 1:21584){
+  if(bicycle1$time[i] >= 7 & bicycle1$time[i]<=18){
+    day_or_night[i] <- "day"}
+  if(bicycle1$time[i] <7 | bicycle1$time[i] > 18)
+    {day_or_night[i]<-"night"}
+}
+bicycle1$daynight <- day_or_night
+bicycle1$time <- factor(bicycle1$time, levels = c(07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 00, 01, 02, 03, 04, 05, 06))
 
-ggplot(data=make_count,aes(x = reorder(Bike_Make,case_number), y = case_number,fill=case_number)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label=case_number), size = 3,vjust=-0.75)+
-  scale_fill_gradient(low="lightsalmon", high="indianred")+
-  theme_minimal() +
-  labs(title = "Which make of bicycle is more likely to be stolen",
-       subtitle = "Confirmed cases from 2014-2019 in Toronto",
-       x = "Bike make",
-       y = "Lost case Count",
-       caption = str_c("Source: Toronto Police Service Public Safety Data Portal"))+theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+# day and night
+annotation <- data.frame(x= c("day", "night"), y = c(8500, 13000), label = c("8418", "13166"))
+
+ggplot(bicycle1) + geom_bar(aes(daynight, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases Day vs. Night") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=annotation, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
+
+# overall
+peak <- data.frame(x= c("14", "17"), y = c(1350, 1380), label = c("peak 1", "peak 2"))
+
+ggplot(bicycle1) + geom_bar(aes(time, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases According to Time") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=peak, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
+
 ```
 
-In the past 6 years, around **¼ cyclists who lost their bicycle don't know their bicycle brands**, which means they don’t really pay attention before making a purchase decision. It’s intuitive that this group of people don’t care about their bikes that much. Maybe they don’t ride bikes that much so they abandoned their bikes outside. Besides it, giant models are preferred by thieves. There were probably a great number of giant model bike thefts misclassified as “unknown” and “other” models. 
+Yes -- the barplot above suggested that our hypothesis is correct. Defining 7am to 6pm as day time, and 6pm to 7 am the second day as night time, **there are 8418 cases in total during day time and 13166 cases in total during night time.** Less people are out during night time and the low visibility makes it harder for pedestrians to catch bike thieves, which is probably the reason why there are many more cases during night time. 
 
-Another intuition is that **people who reported lost bikes to the police station didn’t think their bikes would be found**. They just simply want to finish the documents as soon as possible so they reported their bicycle brand as “others” and “unknown”. This is a warning to police stations. Thinking back to the low recovery rate of bike thefts, the low crime cost for thieves make the bike thefts remain a growth pattern over years, distrust occurs for a reason. People know their bikes might never be found once they do some research before reporting to the police station. Police officers should treat bike thefts seriously to decrease bike thefts in our neighborhoods, increasing the cost of stealing, and making cyclists feel safer in the future.
+In addition to the significant difference between daytime and night time, we can also observe some patterns in the cases across different times in a day, which is depicted in the bottom barplot. **Other than the peak at night, the case counts during daytime peaks two times in a day, which is during 1 to 2pm and 5 pm.** During lunch breaks, people often ride bikes to buy lunch and would probably park their bikes unlocked nearby to order food thus enabling thieves to steal the bike easily, which might be a reason for the first peak. Similar reason holds for the second peak too. After work, people often ride bikes and stop by groceries or restaurants to buy daily supplies and food. As you can see, thieves are more attentive than we thought: once the bike is out of your sight, there is a risk that your bike becomes thieves' prey.
 
-(**This is a suggestion to Toronto Police Station**: The data entry is problematic. Toronto police stations should consider formatting the data consistently and treating bike thefts more seriously. There is no uniform code for bike makes. For example, the bike make “other” has probably 30 different codes in the original dataset. Similarly, various codes for the same make “unknown” including but not limited to “UN”,”UNKNOWN”,”UK”, “UNK”. The formatting for the same categories of bike make should be consistent to avoid confusion. What matters is that when police officers track the stolen bike, the characteristics of the bike should remain clear or it will add difficulty for officers to figure out the true meaning of the code. )
+\newpage
 
+# A Few Final Takeaways -- highlights of the cases pattern
+
+* Checklist: What's the most common characteristics stolen bikes have? 
+  * Geographic: Downtown, university & college campuses
+  * Parking Location: Outside
+  * Time: Summer
+  * When: Night
+  * Color: Black
+  * Type: Mountain & Road
+  * Cost: Range from 100 - 1500, with the mode of the cost equal to 500
+
+Last but not least, although it sounds a bit cliche, bike owners really should pay more attention and invest in a better lock. Possible ways to avoid bike thefts includes using two locks, registering your bike, and to take light and other easily removed items with you.
+
+## Why and what should we care?
+|       The data we used for the analysis of this article records data from 2014-2019. Unfortunately, bike thefts did not get any better as we entered the pandemic. According to NY Times and CBS News, bike thefts cases increase as cycling becomes a desirable way of  commuting. Instead of taking public transportations such as buses or trains, people ride bikes to avoid the transmission of the disease. Besides, as we became more sedentary due to remote working, riding the bike is an ideal way to get some physical activity and stay fit. The prevalence of cycling causes the shortage of bicycles, which makes more people to become bike thieves. What's more, the changing of our lifestyle and daily routine make past analysis and past data invalid; we no longer go to work and go to school. **Bike prevention is harder now! We should be more careful than ever before to avoid falling prey to bike thefts. **
+
+# Limitations, Future Direction, And Suggestions
+
+|       Although we could extract many useful information and insights from the data provided by the Toronto Police Service, we do require some more details to make our analysis more holistic. Firstly, the bike theft victims’ age should come in handy in our analysis, as we could take our guesses of target victims one step further. Specifically, we could know whether or not the thieves really prefer to keep their eyes on areas near university and college campuses. Further, information of whether the victims lock their bikes, or what kind of locks they used is also vital in order to get a sense of what lock to use and to avoid to prevent thefts. If possible, information of the time left parked could also better the analysis, so that we could possibly estimate the duration for commiting bike theft and learn the bike theft pattern.
+
+Another major limitation is the formatting of the data entries. In particular, the data is not formatted in a consistent way. For instance, the Bike Make “Other” probably has 30 different codes in the original dataset. Similarly, there are various codes for the same Bike Make “Unknown” including but not limited to “UN”, “Unknown”, “UK”, “UNK”, which makes the analysis hard. **A consistent formatting eliminates confusion for the audience and police officers.** Assuming that the police officers see the code “GI”, “GIA”, “GT” when tracking stolen bikes, it may cause confusion at first glance therefore adding difficulty for officers to figure out the true meaning of the code. To avoid confusion, we suggest the police to format the data consistently and precisely, while also constantly updating the metadata and setting unifies crime recording systems across Toronto. 
+
+\newpage
+
+# References
+City Bikes. (n.d.). Which is the right bike for you? Retrieved from https://www.citybikes.com/articles/which-is-the-right-bike-for-you-pg80.htm
+
+Kimiko de Freytas-Tamura. (2020, Oct 14). Bike Thefts Are Up 27% in Pandemic N.Y.C.: ‘Sleep With It Next to You’. Retrieved from https://www.nytimes.com/2020/10/14/nyregion/bike-thefts-nyc.html 
+
+Lisa Xing.(2018, July 10). Brazen daylight bike theft points to 'crisis' in Toronto, cycling advocate warns. Retrieved from https://www.cbc.ca/news/canada/toronto/bike-theft-video-toronto-1.4739812 
+
+Megan Cerullo.(2020, Oct 20). Bike thefts spike across U.S. as cycling becomes more popular. Retrieved from https://www.cbsnews.com/news/bike-thefts-united-states-cycling-popularity/ 
+
+Shane, D., Aiden, S.& Adam, T.(2008). Bicycle Theft. Retrieved from https://www.bikeleague.org/sites/default/files/bikeleague/bikeleague.org/programs/bicyclefriendlyamerica/communities/pdfs/cops_biketheft_2008.pdf
+
+Talia Ricci(2019, Sep 06). Video of bike theft in downtown Toronto has police saying, 'Here we go again'. Retrieved from https://www.cbc.ca/news/canada/toronto/brazen-daylight-bike-theft-1.5272602 
+
+The Weather Network. (2021). Retrieved from https://www.theweathernetwork.com/ca/monthly/ontario/toronto
+
+\newpage
+
+# Appendices 
+
+1. Code and corresponding resources for this project can be found at: https://github.com/rubytianxiaoma/Bike-theft-Toronto
