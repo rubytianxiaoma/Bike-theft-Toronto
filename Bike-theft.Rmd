@@ -341,7 +341,7 @@ In addition, black is a representative of night. Black bikes have low visibility
 With the great quantity of black stolen bikes, nighttime seems the best time to steal. It should be hard to steal during daytime then. Will the data support our hypothesis? What time had the most bike thefts in a day?
 
 # 8. Occurence time 
-```{r,echo=FALSE,warning=FALSE,message=FALSE}
+```{r,echo=FALSE,warning=FALSE,message=FALSE,out.width="50%"}
 bicycle1 <- read_csv("C:/Users/jeffj/Desktop/STA313/Bike Theft/bicycle-thefts-2014-2019.csv")
 transform_time <- 0
 for (i in 1:21584){
@@ -362,13 +362,15 @@ bicycle1$time <- factor(bicycle1$time, levels = c(07, 08, 09, 10, 11, 12, 13, 14
 # day and night
 annotation <- data.frame(x= c("day", "night"), y = c(8500, 13000), label = c("8418", "13166"))
 
-ggplot(bicycle1) + geom_bar(aes(daynight, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases Day vs. Night") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=annotation, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
+day_night <- ggplot(bicycle1) + geom_bar(aes(daynight, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases Day vs. Night") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=annotation, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
 
 # overall
 peak <- data.frame(x= c("14", "17"), y = c(1350, 1380), label = c("peak 1", "peak 2"))
 
-ggplot(bicycle1) + geom_bar(aes(time, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases According to Time") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=peak, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
+overall <- ggplot(bicycle1) + geom_bar(aes(time, fill=day_or_night)) + theme_minimal()+ scale_fill_manual(values=c("gold", "navy"))+ ggtitle("Number of Cases According to Time") +  labs(caption = str_c("Source: Toronto Police Service Public Safety Data Portal")) + geom_label(data=peak, aes(x=x, y=y, label=label), color="black", size=4, angle=45, fontface="bold")
 
+day_night
+overall
 ```
 
 Yes -- the barplot above suggested that our hypothesis is correct. Defining 7am to 6pm as day time, and 6pm to 7 am the second day as night time, **there are 8418 cases in total during day time and 13166 cases in total during night time.** Less people are out during night time and the low visibility makes it harder for pedestrians to catch bike thieves, which is probably the reason why there are many more cases during night time. 
